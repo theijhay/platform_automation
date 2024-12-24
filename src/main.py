@@ -2,6 +2,10 @@ import os
 from utils.api_client import authenticate_user
 from utils.url_parser import parse_login_endpoint
 from utils.browser_handler import redirect_to_browser_with_url, redirect_to_browser_with_cookies
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 def main():
     platform_url = input("Enter the platform URL: ").strip()
