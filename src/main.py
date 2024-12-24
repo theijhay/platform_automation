@@ -28,3 +28,6 @@ def main():
             redirect_to_browser_with_cookies(platform_url)
     else:
         print("Authentication failed or session data not available.")
+
+if __name__ == "__main__":
+    main()
