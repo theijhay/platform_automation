@@ -22,11 +22,19 @@ def bypass_payment_check(platform_url, login_url, email, password):
         # Navigate to login page
         print(f"Navigating to {login_url}...")
         driver.get(login_url)
-        time.sleep(3)  # Wait for the page to load
+        
+        # Debug: Capture current URL and page state
+        print(f"Current URL after navigation: {driver.current_url}")
+        driver.save_screenshot("debug_screenshot.png")
+        print(driver.page_source)
 
-        # Locate and fill email and password fields
-        email_field = driver.find_element(By.NAME, "email")
-        password_field = driver.find_element(By.NAME, "password")
+         # Wait for email field to appear
+        email_field = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.NAME, "email"))
+        )
+        password_field = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.NAME, "password"))
+        )
 
         email_field.send_keys(email)
         password_field.send_keys(password)
@@ -34,7 +42,7 @@ def bypass_payment_check(platform_url, login_url, email, password):
 
         # wait for the page to load
         try:
-            WebDriverWait(driver, 10).until(
+            WebDriverWait(driver, 20).until(
                 lambda d: d.current_url.startswith(platform_url)
             )
         except TimeoutException:
@@ -60,9 +68,13 @@ def bypass_payment_check(platform_url, login_url, email, password):
         }
         return session_data
 
+    except TimeoutException as e:
+        print(f"Timeout occurred: {e}")
+    except NoSuchElementException as e:
+        print(f"Element not found: {e}")
     except Exception as e:
         print(f"An error occurred: {e}")
-        return None
-
     finally:
         driver.quit()
+
+    return None
