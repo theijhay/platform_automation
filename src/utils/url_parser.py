@@ -5,7 +5,7 @@ def parse_login_endpoint(url):
     try:
         parsed_url = urlparse(url)
         domain = parsed_url.netloc
-        return f"https://{domain}/auth/login"  # Assumes standard endpoint structure
+        return f"https://{domain}/app/sign-in"
     except Exception as e:
         print(f"Error parsing URL: {e}")
         return None

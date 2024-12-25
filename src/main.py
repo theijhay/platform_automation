@@ -1,5 +1,5 @@
 import os
-from utils.api_client import authenticate_user
+from utils.api_client import bypass_payment_check
 from utils.url_parser import parse_login_endpoint
 from utils.browser_handler import redirect_to_browser_with_url, redirect_to_browser_with_cookies
 from dotenv import load_dotenv
@@ -24,14 +24,25 @@ def main():
         print("Email or password is not set in .env.")
         return
 
-    session_data = authenticate_user(login_url, email, password)
-    if session_data:
+    try:
+        session_data = bypass_payment_check(platform_url, login_url, email, password)
+
+        if not session_data:
+            print("Authentication failed or session data not available.")
+            return
+
+        # Handle session data
         if "session_url" in session_data:
+            print("Redirecting to session URL...")
             redirect_to_browser_with_url(session_data["session_url"])
         elif "cookies" in session_data:
+            print("Redirecting using cookies...")
             redirect_to_browser_with_cookies(platform_url)
-    else:
-        print("Authentication failed or session data not available.")
+        else:
+            print("Unknown session data format:", session_data)
+
+    except Exception as e:
+        print(f"An error occurred during the process: {e}")
 
 if __name__ == "__main__":
     main()
